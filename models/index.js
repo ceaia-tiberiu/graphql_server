@@ -13,7 +13,7 @@ const sequelize = new Sequelize(
 const db = {
     User: sequelize.import('./user'),
     Board: sequelize.import('./board'),
-    Suggestion: sequelize.import('./suggestions.js')
+    Suggestion: sequelize.import('./suggestions')
 };
 
 Object.keys(db).forEach(modelName => {
@@ -23,6 +23,6 @@ Object.keys(db).forEach(modelName => {
 });
 
 db.sequilize = sequelize;
-db.Sequilize = Sequelize;
+// db.Sequilize = Sequelize;
 
 export default db;
