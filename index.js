@@ -4,6 +4,7 @@ import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import { makeExecutableSchema } from 'graphql-tools';
 import typeDefs from './schema';
 import resolvers from './resolvers';
+import models from './models';
 // Put together a schema
 const schema = makeExecutableSchema({
   typeDefs,
@@ -19,6 +20,10 @@ app.use(
   })
 );
 // bodyParser is needed just for POST.
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
+app.use(
+  '/graphql',
+  bodyParser.json(),
+  graphqlExpress({ schema, context: { models } })
+);
 
-app.listen(1500);
+models.sequilize.sync().then(() => app.listen(1500));
