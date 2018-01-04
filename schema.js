@@ -41,7 +41,7 @@ type Mutation {
     deleteUser(id: Int!): Int!,
     createBoard( name: String, owner: Int!): Board!,
     createSuggestion(text: String, creatorId: Int!,boardId: Int!): Suggestion!
-    register(username: String!, email: String, password: String!): User!
+    register(username: String!, email: String, password: String!, isAdmimn: Boolean): User!
     login(email: String, password: String): String!
 }
 
