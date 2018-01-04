@@ -1,8 +1,19 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import pick from 'lodash/pick';
+import { PubSub } from 'graphql-subscriptions';
+
+export const pubsub = new PubSub();
+
+const USER_REGISTERD = 'USER_REGISTRED';
 
 export default {
+    Subscription: {
+        userRegistred: {
+            subscribe: () => pubsub.asyncIterator(USER_REGISTERD)
+        }
+    },
+
     User: {
         boards: ({ id }, args, { models }) =>
             models.Board.findAll({
@@ -83,7 +94,11 @@ export default {
             const user = args;
             // 12 is how many charaters salt should have
             user.password = await bcrypt.hash(user.password, 12);
-            return models.User.create(user);
+            const userRegistred = await models.User.create(user);
+            pubsub.publish(USER_REGISTERD, {
+                userRegistred
+            });
+            return userRegistred;
         },
         login: async (parent, { email, password }, { models, SECRET }) => {
             const user = await models.User.findOne({ where: { email } });

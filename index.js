@@ -4,6 +4,9 @@ import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import { makeExecutableSchema } from 'graphql-tools';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
+import { createServer } from 'http';
+import { execute, subscribe } from 'graphql';
+import { SubscriptionServer } from 'subscriptions-transport-ws';
 
 import typeDefs from './schema';
 import resolvers from './resolvers';
@@ -50,4 +53,19 @@ app.use(
     }))
 );
 
-models.sequilize.sync().then(() => app.listen(1500));
+const server = createServer(app);
+models.sequilize.sync().then(() =>
+    server.listen(1500, () => {
+        new SubscriptionServer(
+            {
+                execute,
+                subscribe,
+                schema
+            },
+            {
+                server,
+                path: '/subscriptions'
+            }
+        );
+    })
+);

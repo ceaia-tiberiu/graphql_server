@@ -1,5 +1,10 @@
 export default `
 
+type Subscription {
+    userRegistred: User! 
+}
+
+
 type Suggestion {
     id: Int!,
     text: String!,
@@ -38,5 +43,11 @@ type Mutation {
     createSuggestion(text: String, creatorId: Int!,boardId: Int!): Suggestion!
     register(username: String!, email: String, password: String!): User!
     login(email: String, password: String): String!
+}
+
+schema {
+    query: Query,
+    mutation: Mutation,
+    subscription: Subscription
 }
 `;
