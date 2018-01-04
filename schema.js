@@ -23,11 +23,17 @@ type User {
     id: Int!,
     username: String!,
     email: String!,
+    isAdmin: Boolean!, 
     createdAt: String!,
     updatedAt: String!,
     boards: [Board!]!,
     suggestions: [Suggestion!]!
 } 
+
+type AuthPayLoad {
+    token: String!,
+    refreshToken: String!
+}
 
 type Query {
     allUsers: [User!]!,
@@ -42,7 +48,8 @@ type Mutation {
     createBoard( name: String, owner: Int!): Board!,
     createSuggestion(text: String, creatorId: Int!,boardId: Int!): Suggestion!
     register(username: String!, email: String, password: String!, isAdmimn: Boolean): User!
-    login(email: String, password: String): String!
+    login(email: String, password: String): AuthPayLoad!
+    refreshTokens(token:String!, refreshToken: String!): AuthPayload!
 }
 
 schema {

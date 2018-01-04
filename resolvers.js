@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import pick from 'lodash/pick';
 import { PubSub } from 'graphql-subscriptions';
 import { requiresAuth, requiresAdmin } from './permission';
+import { refreshTokens, tryLogin } from './auth';
 
 export const pubsub = new PubSub();
 
@@ -102,29 +103,9 @@ export default {
             });
             return userRegistred;
         },
-        login: async (parent, { email, password }, { models, SECRET }) => {
-            const user = await models.User.findOne({ where: { email } });
-            if (!user) {
-                throw new Error('No user with that email');
-            }
-            const valid = await bcrypt.compare(password, user.password);
-            if (!valid) {
-                throw new Error('Incorect password');
-            }
-            // Token = '12313123sadadasdaas3141313asadsd'
-            // verify - needs secret - use me for authentication
-            // decode - no need for secret - use me on the client side
-            const token = jwt.sign(
-                {
-                    user: pick(user, ['id', 'username', 'isAdmin'])
-                },
-                SECRET,
-                {
-                    expiresIn: '1y'
-                }
-            );
-
-            return token;
-        }
+        login: async (parent, { email, password }, { models, SECRET }) =>
+            tryLogin(email, password, models, SECRET),
+        refreshTokens: (parent, { token, refreshToken }, { models, SECRET }) =>
+            refreshTokens(token, refreshToken, models, SECRET)
     }
 };
