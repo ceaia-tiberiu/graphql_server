@@ -17,6 +17,7 @@ type Board {
 type User {
     id: Int!,
     username: String!,
+    email: String!,
     createdAt: String!,
     updatedAt: String!,
     boards: [Board!]!,
@@ -25,16 +26,17 @@ type User {
 
 type Query {
     allUsers: [User!]!,
-    getUser(username: String!): User!,
+    me: User,
     userBoards(owner: String!): [Board!]!,
     userSuggestions(creatorId: String!): [Suggestion!]!
 }
 
 type Mutation {
-    createUser(username: String!): User,
     updateUser(id: Int!, newUsername: String!): [Int!]!,
     deleteUser(id: Int!): Int!,
     createBoard( name: String, owner: Int!): Board!,
     createSuggestion(text: String, creatorId: Int!,boardId: Int!): Suggestion!
+    register(username: String!, email: String, password: String!): User!
+    login(email: String, password: String): String!
 }
 `;
