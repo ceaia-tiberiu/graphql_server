@@ -32,12 +32,8 @@ export default {
     },
 
     Board: {
-        suggestions: ({ id }, args, { models }) =>
-            models.Suggestion.findAll({
-                where: {
-                    boardId: id
-                }
-            })
+        suggestions: ({ id }, args, { suggestionLoader }) =>
+            suggestionLoader.load(id)
     },
 
     Suggestion: {
@@ -72,11 +68,10 @@ export default {
                 }
             }),
 
-        userSuggestions: (parent, { creatorId, boardId }, { models }) =>
+        userSuggestions: (parent, { creatorId }, { models }) =>
             models.Suggestion.findAll({
                 where: {
-                    creatorId,
-                    boardId
+                    creatorId
                 }
             })
     },

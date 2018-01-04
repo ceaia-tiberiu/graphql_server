@@ -38,8 +38,8 @@ type AuthPayLoad {
 type Query {
     allUsers: [User!]!,
     me: User,
-    userBoards(owner: String!): [Board!]!,
-    userSuggestions(creatorId: String!): [Suggestion!]!
+    userBoards(owner: Int!): [Board!]!,
+    userSuggestions(creatorId: Int!): [Suggestion!]!
 }
 
 type Mutation {
@@ -49,7 +49,7 @@ type Mutation {
     createSuggestion(text: String, creatorId: Int!,boardId: Int!): Suggestion!
     register(username: String!, email: String, password: String!, isAdmimn: Boolean): User!
     login(email: String, password: String): AuthPayLoad!
-    refreshTokens(token:String!, refreshToken: String!): AuthPayload!
+    refreshTokens(token:String!, refreshToken: String!): AuthPayLoad!
 }
 
 schema {

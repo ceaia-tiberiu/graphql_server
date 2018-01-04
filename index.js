@@ -7,6 +7,8 @@ import cors from 'cors';
 import { createServer } from 'http';
 import { execute, subscribe } from 'graphql';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
+import DataLoader from 'dataloader';
+import groupBy from 'lodash/groupBy';
 
 import typeDefs from './schema';
 import resolvers from './resolvers';
@@ -57,7 +59,23 @@ app.use(
 
 app.use(cors('*'));
 app.use(addUser);
-// bodyParser is needed just for POST.
+
+const batchSuggestions = async (keys, { Suggestion }) => {
+    // keys = [1, 2, 3 ..., 13]
+    const suggestions = await Suggestion.findAll({
+        raw: true,
+        where: {
+            boardId: {
+                $in: keys
+            }
+        }
+    });
+    // suggestion = [{text:'hi', boardId: 1}, {text: 'bye', boardId: 2}, {text: 'bye2'. boardId: 2}]
+    const gs = groupBy(suggestions, 'boardId');
+    // gs = {1: [{text:'hi', boardId: 1}], 2: [{text: 'bye', boardId: 2}, {text: 'bye2'. boardId: 2}]}
+    return keys.map(k => gs[k] || []);
+};
+
 app.use(
     '/graphql',
     bodyParser.json(),
@@ -66,7 +84,10 @@ app.use(
         context: {
             models,
             SECRET,
-            user: req.user
+            user: req.user,
+            suggestionLoader: new DataLoader(keys =>
+                batchSuggestions(keys, models)
+            )
         }
     }))
 );
