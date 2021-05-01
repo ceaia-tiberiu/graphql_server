@@ -23,7 +23,7 @@
     "lodash": "^4.17.4",
     "pg": "^7.4.0",
     "pg-hstore": "^2.3.2",
-    "sequelize": "^4.28.6",
+    "sequelize": "^6.6.2",
     "subscriptions-transport-ws": "^0.9.4"
   },
   "devDependencies": {
